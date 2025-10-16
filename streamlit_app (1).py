@@ -1,200 +1,106 @@
-"""
-CTD1D Café – Streamlit demonstration app
-This script creates a small café‑style ordering application using the
-Streamlit framework.  Users can browse coffee, fruit juice and cake
-options, select flavours/variants, add quantities to a cart and then
-check out.  A simple pricing engine applies bulk discounts and
-time‑based specials (morning combo, afternoon juice or a night‑time
-happy hour) before displaying a receipt.  The example illustrates
-several core concepts from Streamlit: session state for persisting
-data across interactions, widgets for user input, columns to lay
-content side by side and custom page configuration.
-"""
-
 import streamlit as st
-from datetime import datetime
 
+st.title("☕️ Café Corner — with Time Toggle Discounts")
 
-def main() -> None:
-    """Main entry point of the café application."""
-    # ------------------------------------------------------------------
-    # Page configuration
-    # Set a title and page icon.  The layout is centered to keep the
-    # columns aligned on wider screens.
-    st.set_page_config(page_title="CTD1D Café", page_icon="☕", layout="centered")
+# ---------- Menu (keep your existing items here) ----------
+menu = {
+    "Espresso": 2.50,
+    "Latte": 3.50,
+    "Cappuccino": 3.00,
+    "Tea": 2.00,
+    "Croissant": 2.75,
+    "Muffin": 2.25,
+    # Uncomment if you want the afternoon rule to apply:
+    # "Fruit Juice": 2.80,
+}
 
-    st.title("☕ CTD1D Café – Team Streamlit App")
-    st.write(
-        "Choose your favourite drinks and desserts, add them to the cart "
-        "and check out.  Discounts are automatically applied depending on "
-        "the time of day."
+# Map items to simple categories for rules
+CATEGORY = {
+    "Espresso": "coffee", "Latte": "coffee", "Cappuccino": "coffee",
+    "Croissant": "cake", "Muffin": "cake",
+    "Tea": "other", "Fruit Juice": "juice"
+}
+
+st.header("Menu")
+order = {}
+for item, price in menu.items():
+    qty = st.number_input(
+        label=f"{item} (${price:.2f})",
+        min_value=0, max_value=10, value=0, step=1, key=item
     )
+    if qty:
+        order[item] = qty
 
-    # ------------------------------------------------------------------
-    # Menu definitions
-    # Each category is a dictionary containing a display name, a base price
-    # and a list of variants/flavours.  Images are optional – if you wish
-    # to display pictures next to each item, add a valid URL in the
-    # 'Image' field.  The base price will be adjusted by 10% for bulk
-    # purchases of three or more.
-    coffee = {
-        "Name": "Coffee",
-        "Price": 3.0,
-        "Type": ["Mocha", "Latte", "Cappuccino"],
-        "Image": "https://images.pexels.com/photos/312418/pexels-photo-312418.jpeg",
-    }
-    frjuice = {
-        "Name": "Fruit Juice",
-        "Price": 2.0,
-        "Type": ["Apple", "Lemon", "Watermelon"],
-        "Image": "https://media.istockphoto.com/id/915657126/photo/orange-juice-glass-jar-shot-on-rustic-wooden-table.jpg",
-    }
-    cake = {
-        "Name": "Cake",
-        "Price": 6.0,
-        "Type": ["Chocolate", "Vanilla", "Cheese"],
-        "Image": "https://static.vecteezy.com/system/resources/previews/001/738/638/large_2x/chocolate-cake-slice-free-photo.jpg",
-    }
-    menu = {"coffee": coffee, "juice": frjuice, "cake": cake}
+st.divider()
 
-    # ------------------------------------------------------------------
-    # Session state initialisation
-    # Streamlit reruns the script on every interaction.  Use
-    # st.session_state to preserve variables like the cart and currently
-    # selected category across reruns【45687226887764†L67-L75】.  If a key
-    # isn't present in session_state it gets initialised here.
-    ss = st.session_state
-    ss.setdefault("selected_category", None)
-    ss.setdefault("cart", {})  # key: (category, name, variant) -> quantity
-    ss.setdefault("checkout", False)
+# ---------- (1) Time-of-day toggle every 3 hours ----------
+st.subheader("⏰ Choose time of day")
+SLOTS = [
+    "00:00–02:59", "03:00–05:59", "06:00–08:59",
+    "09:00–11:59", "12:00–14:59", "15:00–17:59",
+    "18:00–20:59", "21:00–23:59"
+]
+slot = st.radio("Time slot", SLOTS, horizontal=True)
 
-    # ------------------------------------------------------------------
-    # Category selection
-    # Display three columns with images and a button each.  When a button
-    # is clicked we store the chosen category in session state and reset
-    # the checkout flag.
-    cols = st.columns(3)
-    for col, key in zip(cols, ["coffee", "juice", "cake"]):
-        item = menu[key]
-        with col:
-            st.image(item["Image"], use_column_width=True)
-            if st.button(f"Select {item['Name']}"):
-                ss.selected_category = key
-                ss.checkout = False
-    st.write("\n")
+def slot_to_band(s: str) -> str:
+    """Map a 3-hour slot to a discount band."""
+    idx = SLOTS.index(s)
+    # 0: 00–02, 1: 03–05, 2: 06–08, 3: 09–11, 4: 12–14, 5: 15–17, 6: 18–20, 7: 21–23
+    if idx in (2, 3):       # 06–11
+        return "morning"
+    if idx in (4, 5):       # 12–17
+        return "afternoon"
+    return "night"          # 18–05 (night covers 18–23 and 00–05)
 
-    # ------------------------------------------------------------------
-    # Product detail panel
-    if ss.selected_category and not ss.checkout:
-        item = menu[ss.selected_category]
-        st.subheader(f"Ordering {item['Name']}")
-        variant = st.selectbox("Choose a flavour", item["Type"])
-        quantity = st.number_input("Quantity", min_value=1, max_value=50, value=1, step=1)
-        if st.button("Add to cart"):
-            key = (ss.selected_category, item["Name"], variant)
-            ss.cart[key] = ss.cart.get(key, 0) + quantity
-            st.success(f"Added {quantity} × {variant} {item['Name']}")
+band = slot_to_band(slot)
+st.caption(f"Active band: **{band}**")
 
-    # ------------------------------------------------------------------
-    # Time‑based discount controls
-    # Users can either use the current system time or simulate a different
-    # hour via a slider.  Discounts vary by time band: morning (<12),
-    # afternoon (12–18) and night (>=18).  A combination of coffee and
-    # cake triggers a morning combo discount; fruit juices are discounted
-    # in the afternoon; all items get a bigger discount at night.
-    with st.expander("Discount settings", expanded=False):
-        simulate = st.checkbox("Simulate time", value=True)
-        hour = st.slider(
-            "Hour of day", 0, 23, datetime.now().hour if not simulate else 9
-        )
-        time_band = (
-            "morning" if hour < 12 else ("afternoon" if hour < 18 else "night")
-        )
-        st.write(f"Current time band: **{time_band.capitalize()}**")
+# ---------- (2) Discount engine ----------
+def has_combo(order_dict) -> bool:
+    has_coffee = any(CATEGORY.get(i) == "coffee" for i, q in order_dict.items() if q > 0)
+    has_cake   = any(CATEGORY.get(i) == "cake"   for i, q in order_dict.items() if q > 0)
+    return has_coffee and has_cake
 
-    # ------------------------------------------------------------------
-    # Pricing and receipt generation
-    def calculate_totals(cart_dict: dict) -> dict:
-        """
-        Compute subtotals, discounts and total for the current cart.
+def line_total_with_discounts(item: str, qty: int, band: str, combo_active: bool) -> tuple[float, float, float]:
+    """Return (line_subtotal_before_time_discount, time_discount_amount, final_line_total)."""
+    unit = menu[item]
+    # Optional bulk rule: ≥3 of same item → 10% off BEFORE time-based discount
+    line = unit * qty
+    if qty >= 3:
+        line *= 0.90  # bulk 10%
 
-        Parameters
-        ----------
-        cart_dict : dict
-            A mapping from (category, name, variant) to quantity.
+    cat = CATEGORY.get(item, "other")
+    pct = 0.0
+    if band == "night":
+        pct = 0.30
+    elif band == "afternoon" and cat == "juice":
+        pct = 0.20
+    elif band == "morning" and combo_active and cat in {"coffee", "cake"}:
+        pct = 0.20
 
-        Returns
-        -------
-        dict
-            A summary containing per‑item rows and overall totals.
-        """
-        combo_active = any(k[0] == "coffee" for k in cart_dict) and any(
-            k[0] == "cake" for k in cart_dict
-        )
-        rows = []
-        subtotal = discount_sum = total = 0.0
-        for (cat_key, name, var), qty in cart_dict.items():
-            base_price = menu[cat_key]["Price"]
-            line = base_price * qty
-            # bulk discount: 10% off if buying three or more of the same variant
-            if qty >= 3:
-                line *= 0.9
-            # time‑based discount percentage
-            pct = 0.0
-            if time_band == "night":
-                pct = 0.30
-            elif time_band == "afternoon" and cat_key == "juice":
-                pct = 0.20
-            elif time_band == "morning" and combo_active and cat_key in {"coffee", "cake"}:
-                pct = 0.20
-            disc = line * pct
-            after = line - disc
-            rows.append(
-                {
-                    "Item": f"{name} – {var}",
-                    "Qty": int(qty),
-                    "Unit": base_price,
-                    "Line subtotal": round(line, 2),
-                    "Discount": round(disc, 2),
-                    "Line total": round(after, 2),
-                }
-            )
-            subtotal += line
-            discount_sum += disc
-            total += after
-        return {
-            "rows": rows,
-            "subtotal": round(subtotal, 2),
-            "discount": round(discount_sum, 2),
-            "total": round(total, 2),
-        }
+    d = round(line * pct, 2)
+    after = round(line - d, 2)
+    return round(line, 2), d, after
 
-    # ------------------------------------------------------------------
-    # Checkout button and receipt display
-    # When the user is ready, they click "Proceed to checkout".  The script
-    # calculates totals using the helper above and displays a receipt.
-    if ss.cart and not ss.checkout:
-        if st.button("Proceed to checkout"):
-            ss.checkout = True
-    if ss.checkout and ss.cart:
-        receipt = calculate_totals(ss.cart)
-        st.subheader("🧾 Receipt")
-        st.table(receipt["rows"])
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Subtotal", f"${receipt['subtotal']:.2f}")
-        col2.metric("Discount", f"-${receipt['discount']:.2f}")
-        col3.metric("Total", f"${receipt['total']:.2f}")
-        st.success(
-            "Thank you for your order! Please PayNow to **1234 567 890**. "
-            "Keep this page as your receipt."
-        )
-        if st.button("Clear cart"):
-            ss.cart.clear()
-            ss.selected_category = None
-            ss.checkout = False
-            # rerun the app to reset the UI
-            st.experimental_rerun()
+# ---------- (3) Summary / receipt like your test.py ----------
+if order:
+    st.header("Your Order (with discounts)")
+    combo = has_combo(order)
+    subtotal = 0.0
+    discount_sum = 0.0
+    grand_total = 0.0
 
+    for item, qty in order.items():
+        line_before, disc, line_after = line_total_with_discounts(item, qty, band, combo)
+        subtotal += line_before
+        discount_sum += disc
+        grand_total += line_after
+        st.write(f"{item} × {qty} — Subtotal ${line_before:.2f} | Discount -${disc:.2f} | Line Total ${line_after:.2f}")
 
-if __name__ == "__main__":
-    main()
+    st.markdown(f"**Subtotal:** ${subtotal:.2f}  \n**Total Discount:** -${discount_sum:.2f}  \n**Grand Total:** **${grand_total:.2f}**")
+
+    if st.button("Place Order"):
+        st.success("🎉 Your order has been placed!")
+        st.balloons()
+else:
+    st.info("Select at least one item to see your order summary.")
