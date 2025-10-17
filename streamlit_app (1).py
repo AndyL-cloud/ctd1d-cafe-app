@@ -33,7 +33,27 @@ with col2:
 with col3:
   st.image('https://www.livingnorth.com/images/media/articles/food-and-drink/eat-and-drink/coffee.png?')
   st.number_input("Cake Slice  >>>  $6.00 each", min_value=0, max_value=10, step=1, key="prod3")
-## -----------------------------------------------------------------------------------------
+## ------------------TIME SLOT-----------------
+SLOTS = ["09:00–11:59", "12:00–14:59", "15:00–17:59", "18:00–20:59"]
+
+def slot_to_band(s: str) -> str:
+    if s == "09:00–11:59":
+        return "morning"
+    elif s in ("12:00–14:59", "15:00–17:59"):
+        return "afternoon"
+    else:
+        return "evening"
+st.subheader("⏰ Choose time of day")
+slot = st.radio("Time slot", SLOTS, index=0, horizontal=True)
+band = slot_to_band(slot)
+st.caption(
+    f"Active band: **{band}**  • "
+    "Morning: 20% off Coffee+Cake (combo) • "
+    "Afternoon: 20% off Fruit Juice • "
+    "Evening: 30% off everything • "
+    "Bulk: ≥3 same item = extra 10% off (before time discount)"
+)
+
 
 ## START CALCULATING WHEN BUTTON PRESSED ---------------------------------------------------
 if st.button('CHECKOUT'):
@@ -49,8 +69,44 @@ if st.button('CHECKOUT'):
   price3 = cake['Price'] * prod3
 
   total = price1 + price2 + price3
-## -----------------------------------------------------------------------------------------
+## ---------------------------discount engine setup-Andy--------------------------------------------------
+MENU = {
+    "Coffee": coffee["Price"],
+    "Fruit Juice": frjuice["Price"],
+    "Cake": cake["Price"],
+}
+CATEGORY = {"Coffee": "coffee", "Fruit Juice": "juice", "Cake": "cake"}
 
+def has_combo(order_dict) -> bool:
+    has_coffee = any(CATEGORY[i] == "coffee" for i, q in order_dict.items() if q > 0)
+    has_cake   = any(CATEGORY[i] == "cake"   for i, q in order_dict.items() if q > 0)
+    return has_coffee and has_cake
+
+def line_total_with_discounts(item: str, qty: int, band: str, combo: bool):
+    """
+    Returns (line_before_time, time_discount_amount, line_after_time)
+      - Bulk: qty >= 3 → 10% off BEFORE time-based discount
+      - Evening: 30% off everything
+      - Afternoon: 20% off juices
+      - Morning: 20% off coffee + cake IF combo active
+    """
+    unit = MENU[item]
+    line = unit * qty
+    if qty >= 3:
+        line *= 0.90  # bulk first
+
+    pct = 0.0
+    cat = CATEGORY[item]
+    if band == "evening":
+        pct = 0.30
+    elif band == "afternoon" and cat == "juice":
+        pct = 0.20
+    elif band == "morning" and combo and cat in {"coffee", "cake"}:
+        pct = 0.20
+
+    time_disc = round(line * pct, 2)
+    after = round(line - time_disc, 2)
+    return round(line, 2), time_disc, after
 
 ## DISPLAYING RECEIPT AS A TABLE (KHANSKY) -------------------------------------------------
 menu = [coffee, frjuice, cake]
