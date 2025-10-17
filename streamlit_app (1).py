@@ -94,6 +94,7 @@ full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], p
 st.write(receipt(full_list))
 ## -----------------------------------------------------------------------------------------
 
+## ORIGINAL CODE BELOW ---------------------------------------------------------------------
 '''
 # ---------------- Basic setup ----------------
 st.set_page_config(page_title="CTD1D Café", page_icon="☕")
