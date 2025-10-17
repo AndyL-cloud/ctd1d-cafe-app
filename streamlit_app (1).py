@@ -1,7 +1,100 @@
-# cafe_app.py  —  simple 2-page Streamlit app
-
 import streamlit as st
+import pandas as pd
+import time
 
+## LIST OF PRODUCTS ------------------------------------------------------------------------
+coffee = {'Name' : 'Coffee', 'Price' : 3,'Type' : ['Mocha', 'Latte', 'Cappuccino']}
+frjuice = {'Name' : 'Fruit Juice', 'Price' : 2, 'Type' : ['Apple', 'Lemon', 'Watermelon']}
+cake = {'Name' : 'Cake', 'Price' : 6, 'Type' : ['Chocolate', 'Vanilla', 'Cheese']}
+## -----------------------------------------------------------------------------------------
+
+## INITIALISE VARIABLES --------------------------------------------------------------------
+prod1 = 0
+prod2 = 0
+prod3 = 0
+## -----------------------------------------------------------------------------------------
+
+## SHOW PRODUCTS AS MENU -------------------------------------------------------------------
+st.title('Welcome to our Cafe interface! :coffee:')
+st.write('Please select your order:')
+
+## Seperating one line into the columns
+col1, col2, col3 = st.columns(3)
+
+## Assigning to different columns
+with col1:
+  st.image('https://cdn.shopify.com/s/files/1/0669/0966/7619/files/espresso-shot-crema-in-white-cup-on-wood-table-wrexham-bean.webp?v=1745257519')
+  st.number_input("Coffee  >>>  $3.00 each", min_value=0, max_value=10, step=1, key="prod1")
+
+with col2:
+  st.image('https://farmtojar.com/wp-content/uploads/2016/11/5BA949BB-3B24-4216-B700-E5FE2AF12F7F.jpeg')
+  st.number_input("Fruit Juice  >>>  $2.00 each", min_value=0, max_value=10, step=1, key="prod2")
+
+with col3:
+  st.image('https://www.livingnorth.com/images/media/articles/food-and-drink/eat-and-drink/coffee.png?')
+  st.number_input("Cake Slice  >>>  $6.00 each", min_value=0, max_value=10, step=1, key="prod3")
+## -----------------------------------------------------------------------------------------
+
+## START CALCULATING WHEN BUTTON PRESSED ---------------------------------------------------
+if st.button('CHECKOUT'):
+
+  ## Calculations using user inputs
+  prod1 = int(st.session_state.prod1)
+  price1 = coffee['Price'] * prod1
+
+  prod2 = int(st.session_state.prod2)
+  price2 = frjuice['Price'] * prod2
+
+  prod3 = int(st.session_state.prod3)
+  price3 = cake['Price'] * prod3
+
+  total = price1 + price2 + price3
+## -----------------------------------------------------------------------------------------
+
+
+## DISPLAYING RECEIPT AS A TABLE (KHANSKY) -------------------------------------------------
+'''
+#dictionary for the thingies
+coffee = {'Name' : 'Coffee', 'Price' : 3,'Type' : ['Mocha', 'Latte', 'Cappuccino']}
+frjuice = {'Name' : 'Fruit Juice', 'Price' : 2, 'Type' : ['Apple', 'Lemon', 'Watermelon']}
+cake = {'Name' : 'Cake', 'Price' : 6, 'Type' : ['Chocolate', 'Vanilla', 'Cheese']}
+'''
+menu = [coffee, frjuice, cake]
+
+#just for the prices individually bruh
+def find_price(item_name):
+    for category in menu:
+        if item_name in category['Name']:
+            return category['Price']
+
+#actual main command that you use to pull
+def receipt(full_list):
+    #creates new list that willo be used to combine allat
+    idlist = []
+    quantitylist = []
+    pricelist = []
+    subtotal = []
+
+    #seperates the full_list into 4 seperate columns: id, qty, price, sub
+    for individual_items, individual_qty in full_list:
+        price = find_price(individual_items)
+        idlist.append(individual_items)
+        quantitylist.append(individual_qty)
+        pricelist.append(price)
+        subtotal.append(individual_qty*price)
+
+    #panda that into something pandable
+    fullframe = pd.DataFrame({'Item':idlist, 'Quantity':quantitylist, 'Price per Item($)':pricelist, 'Subtotal($)':subtotal})
+
+    #return allat work
+    return fullframe
+
+
+full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
+st.write(receipt(full_list))
+## -----------------------------------------------------------------------------------------
+
+'''
 # ---------------- Basic setup ----------------
 st.set_page_config(page_title="CTD1D Café", page_icon="☕")
 
@@ -171,3 +264,4 @@ if st.session_state.page == "bill":
         st.rerun()
     if b2.button("✅ Confirm order", use_container_width=True):
         st.success("Order confirmed! (Hook this up to a sheet or database if needed.)")
+'''
