@@ -54,7 +54,7 @@ st.caption(
     "Bulk: ≥3 same item = extra 10% off (before time discount)"
 )
 
-
+'''
 ## START CALCULATING WHEN BUTTON PRESSED ---------------------------------------------------
 if st.button('CHECKOUT'):
 
@@ -69,6 +69,7 @@ if st.button('CHECKOUT'):
   price3 = cake['Price'] * prod3
 
   total = price1 + price2 + price3
+'''
 ## ---------------------------discount engine setup-Andy--------------------------------------------------
 MENU = {
     "Coffee": coffee["Price"],
@@ -143,125 +144,7 @@ def receipt(full_list):
 full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
 st.write(receipt(full_list))
 ## -----------------------------------------------------------------------------------------
-# >>> ADDED — LIVE CART (shows what user ordered + discounts in real-time)
-st.subheader("🛒 Your cart")
-# read current widget values (even before checkout)
-prod1 = int(st.session_state.get("prod1", 0))
-prod2 = int(st.session_state.get("prod2", 0))
-prod3 = int(st.session_state.get("prod3", 0))
-order_now = {"Coffee": prod1, "Fruit Juice": prod2, "Cake": prod3}
-combo_active = has_combo(order_now)
 
-rows = []
-total_raw = 0.0
-total_bulk_disc = 0.0
-total_time_disc = 0.0
-grand_total = 0.0
-
-for item, qty in order_now.items():
-    if qty <= 0:
-        continue
-    unit = MENU[item]
-    raw = round(unit * qty, 2)
-    before_time, time_disc, after_time = line_total_with_discounts(item, qty, band, combo_active)
-    bulk_disc = round(raw - before_time, 2)  # (raw) - (after bulk)
-    rows.append({
-        "Item": item,
-        "Qty": qty,
-        "Unit ($)": unit,
-        "Raw ($)": raw,
-        "Bulk - ($)": bulk_disc,
-        "Line before time ($)": before_time,
-        "Time disc - ($)": time_disc,
-        "Line after time ($)": after_time
-    })
-    total_raw += raw
-    total_bulk_disc += bulk_disc
-    total_time_disc += time_disc
-    grand_total += after_time
-
-if len(rows) == 0:
-    st.info("Your cart is empty. Add some items from the menu above!")
-else:
-    cart_df = pd.DataFrame(rows)
-    st.dataframe(cart_df, use_container_width=True)
-    st.markdown(
-        f"""
-**Raw total:** ${total_raw:.2f}  
-**Bulk discounts:** −${total_bulk_disc:.2f}  
-**Time-band discounts:** −${total_time_disc:.2f}  
-### **Cart total now: ${grand_total:.2f}**
-"""
-    )
-
-st.divider()
-'''
-## START CALCULATING WHEN BUTTON PRESSED ---------------------------------------------------
-# Keep your original "CHECKOUT" trigger, but show the final receipt at the very bottom.
-if st.button('CHECKOUT'):
-    # snapshot the values at checkout moment
-    prod1 = int(st.session_state.prod1)
-    price1 = coffee['Price'] * prod1
-
-    prod2 = int(st.session_state.prod2)
-    price2 = frjuice['Price'] * prod2
-
-    prod3 = int(st.session_state.prod3)
-    price3 = cake['Price'] * prod3
-
-    total = price1 + price2 + price3
-
-    # Build your original receipt (pre-discount) table
-    full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
-    st.subheader("🧾 Final receipt (items & subtotals)")
-    st.write(receipt(full_list))
-
-    # >>> ADDED — show the discount breakdown for the same snapshot
-    checkout_order = {"Coffee": prod1, "Fruit Juice": prod2, "Cake": prod3}
-    combo_at_checkout = has_combo(checkout_order)
-    rows_out = []
-    raw_total_out = 0.0
-    bulk_out = 0.0
-    time_out = 0.0
-    grand_out = 0.0
-
-    for item, qty in checkout_order.items():
-        if qty <= 0:
-            continue
-        unit = MENU[item]
-        raw = round(unit * qty, 2)
-        before_time, time_disc, after_time = line_total_with_discounts(item, qty, band, combo_at_checkout)
-        bulk_disc = round(raw - before_time, 2)
-        rows_out.append({
-            "Item": item,
-            "Qty": qty,
-            "Unit ($)": unit,
-            "Raw ($)": raw,
-            "Bulk - ($)": bulk_disc,
-            "Line before time ($)": before_time,
-            "Time disc - ($)": time_disc,
-            "Line after time ($)": after_time
-        })
-        raw_total_out += raw
-        bulk_out += bulk_disc
-        time_out += time_disc
-        grand_out += after_time
-
-    if rows_out:
-        st.subheader("💸 Discount breakdown (applied at checkout)")
-        st.dataframe(pd.DataFrame(rows_out), use_container_width=True)
-        st.markdown(
-            f"""
-**Raw total:** ${raw_total_out:.2f}  
-**Bulk discounts:** −${bulk_out:.2f}  
-**Time-band discounts:** −${time_out:.2f}  
-## **Amount due: ${grand_out:.2f}**
-"""
-        )
-    else:
-        st.info("No items were selected at checkout.")
-
-'''
 
 ## ORIGINAL CODE BELOW ---------------------------------------------------------------------
 '''
