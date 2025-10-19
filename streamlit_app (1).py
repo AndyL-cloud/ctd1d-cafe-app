@@ -195,7 +195,7 @@ else:
     )
 
 st.divider()
-
+'''
 ## START CALCULATING WHEN BUTTON PRESSED ---------------------------------------------------
 # Keep your original "CHECKOUT" trigger, but show the final receipt at the very bottom.
 if st.button('CHECKOUT'):
@@ -261,7 +261,7 @@ if st.button('CHECKOUT'):
     else:
         st.info("No items were selected at checkout.")
 
-
+'''
 
 ## ORIGINAL CODE BELOW ---------------------------------------------------------------------
 '''
