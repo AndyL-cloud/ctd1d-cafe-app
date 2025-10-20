@@ -116,9 +116,9 @@ for item, qty in order_now.items():
         "Unit ($)": unit,
         "Raw ($)": raw,
         "Bulk - ($)": bulk_disc,
-        "Line before time ($)": before_time_disc,
+        "Before time discount($)": before_time_disc,
         "Time disc - ($)": time_disc,
-        "Line after time ($)": after_time_disc
+        "After time discount ($)": after_time_disc
     })
     
     total_raw += raw
@@ -130,8 +130,8 @@ if rows:
     st.dataframe(pd.DataFrame(rows), use_container_width=True)
     st.markdown(
         f"""
-**Raw total:** ${total_raw:.2f}  
-**Bulk discounts:** −${total_bulk_disc:.2f}  
+**Raw total:** ${total_raw:.2f}\n 
+**Bulk discounts:** −${total_bulk_disc:.2f}\n
 **Time-band discounts:** −${total_time_disc:.2f}  
 ### **Cart total now: ${grand_total:.2f}**
 """
