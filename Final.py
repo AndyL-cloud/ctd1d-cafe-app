@@ -58,35 +58,42 @@ st.caption(
 
 ## -----------------------------------------------------------------------------------------
 
-## WAI YAN'S BLOCK--------------------------------------------------------------------------
+## ANDY & WAI YAN'S BLOCK--------------------------------------------------------------------------
+## Morning combo discount function --------------------------------------------------------------------
 def has_combo(order_now):
     if order_now["Coffee"] >= 1 and order_now["Cake"] >= 1:
         return True
     else:
         return False
 
+## Getting user input and assigning zero as default value if there is no input --------------------------------------------------------------------
 prod1 = int(st.session_state.get("prod1",0))
 prod2 = int(st.session_state.get("prod2",0))
 prod3 = int(st.session_state.get("prod3",0))
 
+## Assinging user's order into a dictionary --------------------------------------------------------------------
 order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
+
 morning = has_combo(order_now)
 
 menu = [coffee, frjuice, cake]
 
+## Getting price of items function by Khansky--------------------------------------------------------------------
 def find_price(item_name):
     for category in menu:
         if(item_name == category['Name']):
             return category['Price']
 
+## Displaying items, their prices, and discounts of items in the cart--------------------------------------------------------------------
 st.subheader("🛒 Your cart (with discounts)")
-           
+
 rows = []
 total_raw = 0.0
 total_bulk_disc = 0.0
 total_time_disc = 0.0
 grand_total = 0.0
 
+## Looping to calculate the total price, including time and bulk discounts --------------------------------------------------------------------
 for item, qty in order_now.items():
     if qty <=0:
         continue
@@ -110,6 +117,7 @@ for item, qty in order_now.items():
 
     bulk_disc = round(raw - before_time_disc, 2)
 
+    ## To show a total breakdown of the discounts in a table later on --------------------------------------------------------------------
     rows.append({
         "Item": item,
         "Qty": qty,
@@ -126,6 +134,7 @@ for item, qty in order_now.items():
     total_time_disc += time_disc
     grand_total += after_time_disc
 
+## This is the breakdown table --------------------------------------------------------------------
 if rows:
     st.dataframe(pd.DataFrame(rows), use_container_width=True)
     st.markdown(
@@ -142,14 +151,6 @@ else:
 st.divider()
 
 ## DISPLAYING RECEIPT AS A TABLE (KHANSKY) -------------------------------------------------
-
-
-
-#just for the prices individually bruh
-def find_price(item_name):
-    for category in menu:
-        if item_name in category['Name']:
-            return category['Price']
 
 #actual main command that you use to pull
 def receipt(full_list):
@@ -173,6 +174,7 @@ def receipt(full_list):
     #return allat work
     return fullframe
 
+## Adding a checkout button, displaying the full receipt and price breakdown at the bottom of the page --------------------------------------------------------------------
 if st.button("CHECKOUT"):
     full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
     st.subheader("🧾 Final receipt (items & subtotals)")
