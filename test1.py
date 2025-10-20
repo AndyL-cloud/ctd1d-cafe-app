@@ -87,7 +87,7 @@ total_bulk_disc = 0.0
 total_time_disc = 0.0
 grand_total = 0.0
 
-for item, qty inn order_now.items():
+for item, qty in order_now.items():
     if qty <=0:
         continue
     unit = find_price(item)
