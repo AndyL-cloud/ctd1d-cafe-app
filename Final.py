@@ -179,22 +179,24 @@ def receipt(full_list):
 
 ## Adding a checkout button, displaying the full receipt and price breakdown at the bottom of the page --------------------------------------------------------------------
 if st.button("CHECKOUT"):
-    full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
-    st.subheader("Final receipt (items & subtotals)")
-    st.write(receipt(full_list))
+  full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
+  st.subheader("Final receipt (items & subtotals)")
+  st.write(receipt(full_list))
 
-    # also show the same discount totals snapshot at checkout
-    st.subheader("Discount breakdown at checkout")
-    if rows:
-        st.dataframe(pd.DataFrame(rows), use_container_width=True)
-        st.markdown(
-        f"""
+  time.sleep(1)
+
+  # also show the same discount totals snapshot at checkout
+  st.subheader("Discount breakdown at checkout")
+  if rows:
+      st.dataframe(pd.DataFrame(rows), use_container_width=True)
+      st.markdown(
+      f"""
 **Raw total:** ${total_raw:.2f}\n 
 **Bulk discounts:** −${total_bulk_disc:.2f}\n
 **Time-band discounts:** −${total_time_disc:.2f}  
 ### **Total due: ${grand_total:.2f}**
 """
-    )
+  )
       
-    else:
-        st.info("No items were selected at checkout.")
+  else:
+      st.info("No items were selected at checkout.")
