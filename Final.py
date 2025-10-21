@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import time
 
+st.set_page_config(page_title="Cafe App", layout="wide")
+
 ## Haziq's Portion -------------------------------------------------------------------------
 ## LIST OF PRODUCTS ------------------------------------------------------------------------
 coffee = {'Name' : 'Coffee', 'Price' : 3}
