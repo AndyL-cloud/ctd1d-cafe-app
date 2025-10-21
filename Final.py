@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import time
 
+## Haziq's Portion -------------------------------------------------------------------------
 ## LIST OF PRODUCTS ------------------------------------------------------------------------
 coffee = {'Name' : 'Coffee', 'Price' : 3}
 frjuice = {'Name' : 'Fruit Juice', 'Price' : 2}
@@ -34,7 +35,9 @@ with col3:
   st.image('https://static.vecteezy.com/system/resources/previews/001/738/638/large_2x/chocolate-cake-slice-free-photo.jpg')
   st.number_input("Cake Slice  >>>  $6.00 each", min_value=0, max_value=10, step=1, key="prod3")
 
+## End of Haziq's portion -----------------------------------------------------------------
 
+## Andy's portion -------------------------------------------------------------------------
 ## ------------------TIME SLOT-----------------
 SLOTS = ["09:00–11:59", "12:00–14:59", "15:00–17:59", "18:00–20:59"]
 
@@ -85,7 +88,7 @@ def find_price(item_name):
             return category['Price']
 
 ## Displaying items, their prices, and discounts of items in the cart--------------------------------------------------------------------
-st.subheader("Your cart (with discounts)")
+st.subheader("Cart (with discounts)")
 
 rows = []
 total_raw = 0.0
@@ -185,13 +188,13 @@ if st.button("CHECKOUT"):
     if rows:
         st.dataframe(pd.DataFrame(rows), use_container_width=True)
         st.markdown(
-            f"""
-        Raw total: ${total_raw:.2f}  
-        Bulk discounts: −${total_bulk_disc:.2f}  
-        Time-band discounts: −${total_time_disc:.2f}  
-        Amount due: ${grand_total:.2f}
-        """
-        )
+        f"""
+**Raw total:** ${total_raw:.2f}\n 
+**Bulk discounts:** −${total_bulk_disc:.2f}\n
+**Time-band discounts:** −${total_time_disc:.2f}  
+### **Total due: ${grand_total:.2f}**
+"""
+    )
       
     else:
         st.info("No items were selected at checkout.")
