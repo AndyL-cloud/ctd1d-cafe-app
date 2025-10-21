@@ -52,44 +52,44 @@ if page == "Menu":
   • Bulk: more than 3 of the same item = extra 10% off (before time discount)"""
   )
 
-## End of Haziq's portion -----------------------------------------------------------------
+  ## End of Haziq's portion -----------------------------------------------------------------
 
-## Andy's portion -------------------------------------------------------------------------
-## ------------------TIME SLOT-----------------
-SLOTS = ["09:00–11:59", "12:00–14:59", "15:00–17:59", "18:00–20:59"]
+  ## Andy's portion -------------------------------------------------------------------------
+  ## ------------------TIME SLOT-----------------
+  SLOTS = ["09:00–11:59", "12:00–14:59", "15:00–17:59", "18:00–20:59"]
 
-def slot_to_band(s: str) -> str:
-    if s == "09:00–11:59":
-        return "morning"
-    elif s in ("12:00–14:59", "15:00–17:59"):
-        return "afternoon"
-    else:
-        return "evening"
-## -----------------------------------------------------------------------------------------
+  def slot_to_band(s: str) -> str:
+      if s == "09:00–11:59":
+          return "morning"
+      elif s in ("12:00–14:59", "15:00–17:59"):
+          return "afternoon"
+      else:
+          return "evening"
+  ## -----------------------------------------------------------------------------------------
 
-## ANDY & WAI YAN'S BLOCK--------------------------------------------------------------------------
-## Morning combo discount function --------------------------------------------------------------------
-def has_combo(order_now):
-    if order_now["Coffee"] >= 1 and order_now["Cake"] >= 1:
-        return True
-    else:
-        return False
+  ## ANDY & WAI YAN'S BLOCK--------------------------------------------------------------------------
+  ## Morning combo discount function --------------------------------------------------------------------
+  def has_combo(order_now):
+      if order_now["Coffee"] >= 1 and order_now["Cake"] >= 1:
+          return True
+      else:
+          return False
 
-## Getting user input and assigning zero as default value if there is no input --------------------------------------------------------------------
-prod1 = int(st.session_state.get("prod1",0))
-prod2 = int(st.session_state.get("prod2",0))
-prod3 = int(st.session_state.get("prod3",0))
+  ## Getting user input and assigning zero as default value if there is no input --------------------------------------------------------------------
+  prod1 = int(st.session_state.get("prod1",0))
+  prod2 = int(st.session_state.get("prod2",0))
+  prod3 = int(st.session_state.get("prod3",0))
 
-## Assinging user's order into a dictionary --------------------------------------------------------------------
-order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
+  ## Assinging user's order into a dictionary --------------------------------------------------------------------
+  order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
 
-morning = has_combo(order_now)
+  morning = has_combo(order_now)
 
-## Getting price of items function by Khansky--------------------------------------------------------------------
-def find_price(item_name):
-    for category in menu:
-        if(item_name == category['Name']):
-            return category['Price']
+  ## Getting price of items function by Khansky--------------------------------------------------------------------
+  def find_price(item_name):
+      for category in menu:
+          if(item_name == category['Name']):
+              return category['Price']
 
 else:
   ## Displaying items, their prices, and discounts of items in the cart--------------------------------------------------------------------
