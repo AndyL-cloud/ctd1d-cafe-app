@@ -4,6 +4,8 @@ import time
 
 st.set_page_config(page_title="Cafe App", layout="wide")
 
+page = st.sidebar.radio("Go to", ["Menu", "Cart & Checkout"])
+
 ## Haziq's Portion -------------------------------------------------------------------------
 ## LIST OF PRODUCTS ------------------------------------------------------------------------
 coffee = {'Name' : 'Coffee', 'Price' : 3}
