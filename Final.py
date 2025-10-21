@@ -6,6 +6,8 @@ st.set_page_config(page_title="Cafe App", layout="wide")
 
 page = st.sidebar.radio("Go to", ["Menu", "Cart & Checkout"])
 
+SLOTS = ["09:00–11:59", "12:00–14:59", "15:00–17:59", "18:00–20:59"]
+
 ## Haziq's Portion -------------------------------------------------------------------------
 ## LIST OF PRODUCTS ------------------------------------------------------------------------
 coffee = {'Name' : 'Coffee', 'Price' : 3}
@@ -19,6 +21,46 @@ prod1 = 0
 prod2 = 0
 prod3 = 0
 ## -----------------------------------------------------------------------------------------
+
+def slot_to_band(s: str) -> str:
+      if s == "09:00–11:59":
+          return "morning"
+      elif s in ("12:00–14:59", "15:00–17:59"):
+          return "afternoon"
+      else:
+          return "evening"
+
+def has_combo(order_now):
+      if order_now["Coffee"] >= 1 and order_now["Cake"] >= 1:
+          return True
+      else:
+          return False
+
+def find_price(item_name):
+      for category in menu:
+          if(item_name == category['Name']):
+              return category['Price']
+
+def receipt(full_list):
+      #creates new list that willo be used to combine allat
+      idlist = []
+      quantitylist = []
+      pricelist = []
+      subtotal = []
+
+      #seperates the full_list into 4 seperate columns: id, qty, price, sub
+      for individual_items, individual_qty in full_list:
+          price = find_price(individual_items)
+          idlist.append(individual_items)
+          quantitylist.append(individual_qty)
+          pricelist.append(price)
+          subtotal.append(individual_qty*price)
+
+      #panda that into something pandable
+      fullframe = pd.DataFrame({'Item':idlist, 'Quantity':quantitylist, 'Price per Item($)':pricelist, 'Subtotal($)':subtotal})
+
+      #return allat work
+      return fullframe
 
 ## SHOW PRODUCTS AS MENU -------------------------------------------------------------------
 if page == "Menu":
@@ -56,24 +98,14 @@ if page == "Menu":
 
   ## Andy's portion -------------------------------------------------------------------------
   ## ------------------TIME SLOT-----------------
-  SLOTS = ["09:00–11:59", "12:00–14:59", "15:00–17:59", "18:00–20:59"]
+  
 
-  def slot_to_band(s: str) -> str:
-      if s == "09:00–11:59":
-          return "morning"
-      elif s in ("12:00–14:59", "15:00–17:59"):
-          return "afternoon"
-      else:
-          return "evening"
+  
   ## -----------------------------------------------------------------------------------------
 
   ## ANDY & WAI YAN'S BLOCK--------------------------------------------------------------------------
   ## Morning combo discount function --------------------------------------------------------------------
-  def has_combo(order_now):
-      if order_now["Coffee"] >= 1 and order_now["Cake"] >= 1:
-          return True
-      else:
-          return False
+  
 
   ## Getting user input and assigning zero as default value if there is no input --------------------------------------------------------------------
   prod1 = int(st.session_state.get("prod1",0))
@@ -86,10 +118,7 @@ if page == "Menu":
   morning = has_combo(order_now)
 
   ## Getting price of items function by Khansky--------------------------------------------------------------------
-  def find_price(item_name):
-      for category in menu:
-          if(item_name == category['Name']):
-              return category['Price']
+  
 
 else:
   ## Displaying items, their prices, and discounts of items in the cart--------------------------------------------------------------------
@@ -161,27 +190,7 @@ else:
   ## DISPLAYING RECEIPT AS A TABLE (KHANSKY) -------------------------------------------------
 
   #actual main command that you use to pull
-  def receipt(full_list):
-      #creates new list that willo be used to combine allat
-      idlist = []
-      quantitylist = []
-      pricelist = []
-      subtotal = []
-
-      #seperates the full_list into 4 seperate columns: id, qty, price, sub
-      for individual_items, individual_qty in full_list:
-          price = find_price(individual_items)
-          idlist.append(individual_items)
-          quantitylist.append(individual_qty)
-          pricelist.append(price)
-          subtotal.append(individual_qty*price)
-
-      #panda that into something pandable
-      fullframe = pd.DataFrame({'Item':idlist, 'Quantity':quantitylist, 'Price per Item($)':pricelist, 'Subtotal($)':subtotal})
-
-      #return allat work
-      return fullframe
-
+  
   ## Adding a checkout button, displaying the full receipt and price breakdown at the bottom of the page --------------------------------------------------------------------
   if st.button("CHECKOUT"):
     full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
