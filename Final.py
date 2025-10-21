@@ -186,11 +186,12 @@ if st.button("CHECKOUT"):
         st.dataframe(pd.DataFrame(rows), use_container_width=True)
         st.markdown(
             f"""
-**Raw total:** ${total_raw:.2f}  
-**Bulk discounts:** −${total_bulk_disc:.2f}  
-**Time-band discounts:** −${total_time_disc:.2f}  
-## **Amount due: ${grand_total:.2f}**
-"""
+        Raw total: ${total_raw:.2f}  
+        Bulk discounts: −${total_bulk_disc:.2f}  
+        Time-band discounts: −${total_time_disc:.2f}  
+        Amount due: ${grand_total:.2f}
+        """
         )
+      
     else:
         st.info("No items were selected at checkout.")
