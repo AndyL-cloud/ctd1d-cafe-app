@@ -15,7 +15,7 @@ prod3 = 0
 ## -----------------------------------------------------------------------------------------
 
 ## SHOW PRODUCTS AS MENU -------------------------------------------------------------------
-st.title('Welcome to our Cafe interface! :coffee:')
+st.title('Welcome to our Cafe interface!')
 st.write('Please select your order:')
 
 ## Seperating one line into the columns
@@ -27,11 +27,11 @@ with col1:
   st.number_input("Coffee  >>>  $3.00 each", min_value=0, max_value=10, step=1, key="prod1")
 
 with col2:
-  st.image('https://farmtojar.com/wp-content/uploads/2016/11/5BA949BB-3B24-4216-B700-E5FE2AF12F7F.jpeg')
+  st.image('https://emilylaurae.com/wp-content/uploads/2022/08/passion-fruit-juice-2.jpg')
   st.number_input("Fruit Juice  >>>  $2.00 each", min_value=0, max_value=10, step=1, key="prod2")
 
 with col3:
-  st.image('https://www.livingnorth.com/images/media/articles/food-and-drink/eat-and-drink/coffee.png?')
+  st.image('https://static.vecteezy.com/system/resources/previews/001/738/638/large_2x/chocolate-cake-slice-free-photo.jpg')
   st.number_input("Cake Slice  >>>  $6.00 each", min_value=0, max_value=10, step=1, key="prod3")
 
 
@@ -45,14 +45,14 @@ def slot_to_band(s: str) -> str:
         return "afternoon"
     else:
         return "evening"
-st.subheader("⏰ Choose time of day")
+st.subheader("Choose time of day")
 slot = st.radio("Time slot", SLOTS, index=0, horizontal=True)
 band = slot_to_band(slot)
 st.caption(
-    f"Active band: **{band}**  • "
-    "Morning: 20% off Coffee+Cake (combo) • "
-    "Afternoon: 20% off Fruit Juice • "
-    "Evening: 30% off everything • "
+    f"Active band: **{band}**  • /n"
+    "Morning: 20% off Coffee+Cake (combo) • /n"
+    "Afternoon: 20% off Fruit Juice • /n"
+    "Evening: 30% off everything • /n"
     "Bulk: ≥3 same item = extra 10% off (before time discount)"
 )
 
