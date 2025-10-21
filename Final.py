@@ -2,6 +2,12 @@ import streamlit as st
 import pandas as pd
 import time
 
+## CTD 1D ​SC02 Team 16​
+## 1010143 Andy​
+## 1010305 Khansky​
+## 1010579 Wai Yan​
+## 1010489 Haziq
+
 ## Configures the website to be the width of the browser -------------------------------- HAZIQ
 st.set_page_config(page_title="Cafe App", layout="wide")
 
