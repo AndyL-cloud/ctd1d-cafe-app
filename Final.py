@@ -24,7 +24,6 @@ prod3 = int(st.session_state.get("prod3",0))
 ## Assinging user's order into a dictionary --------------------------------------------------------------------
 order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
 
-morning = has_combo(order_now)
 ## -----------------------------------------------------------------------------------------
 
 def slot_to_band(s: str) -> str:
@@ -66,6 +65,9 @@ def receipt(full_list):
 
       #return allat work
       return fullframe
+
+
+morning = has_combo(order_now)
 
 ## SHOW PRODUCTS AS MENU -------------------------------------------------------------------
 if page == "Menu":
