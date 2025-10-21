@@ -5,9 +5,9 @@ import time
 st.set_page_config(page_title="Cafe App", layout="wide")
 
 # --- Persist quantities in session_state ---
-prod1 = 0
-prod2 = 0
-prod3 = 0
+for key in ("prod1","prod2","prod3"):
+    if key not in st.session_state:
+        st.session_state[key] = 0
 
 # --- Navigation ---
 page = st.sidebar.radio("Go to", ["Menu", "Cart & Checkout"])
