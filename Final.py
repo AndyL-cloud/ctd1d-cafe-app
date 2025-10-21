@@ -17,9 +17,14 @@ menu = [coffee, frjuice, cake]
 ## -----------------------------------------------------------------------------------------
 
 ## INITIALISE VARIABLES --------------------------------------------------------------------
-prod1 = 0
-prod2 = 0
-prod3 = 0
+prod1 = int(st.session_state.get("prod1",0))
+prod2 = int(st.session_state.get("prod2",0))
+prod3 = int(st.session_state.get("prod3",0))
+
+## Assinging user's order into a dictionary --------------------------------------------------------------------
+order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
+
+morning = has_combo(order_now)
 ## -----------------------------------------------------------------------------------------
 
 def slot_to_band(s: str) -> str:
@@ -108,14 +113,7 @@ if page == "Menu":
   
 
   ## Getting user input and assigning zero as default value if there is no input --------------------------------------------------------------------
-  prod1 = int(st.session_state.get("prod1",0))
-  prod2 = int(st.session_state.get("prod2",0))
-  prod3 = int(st.session_state.get("prod3",0))
-
-  ## Assinging user's order into a dictionary --------------------------------------------------------------------
-  order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
-
-  morning = has_combo(order_now)
+  
 
   ## Getting price of items function by Khansky--------------------------------------------------------------------
   
