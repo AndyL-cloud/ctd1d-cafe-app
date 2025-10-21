@@ -85,7 +85,7 @@ def find_price(item_name):
             return category['Price']
 
 ## Displaying items, their prices, and discounts of items in the cart--------------------------------------------------------------------
-st.subheader("🛒 Your cart (with discounts)")
+st.subheader("Your cart (with discounts)")
 
 rows = []
 total_raw = 0.0
@@ -177,11 +177,11 @@ def receipt(full_list):
 ## Adding a checkout button, displaying the full receipt and price breakdown at the bottom of the page --------------------------------------------------------------------
 if st.button("CHECKOUT"):
     full_list = [(coffee['Name'], prod1), (frjuice['Name'], prod2), (cake['Name'], prod3)]
-    st.subheader("🧾 Final receipt (items & subtotals)")
+    st.subheader("Final receipt (items & subtotals)")
     st.write(receipt(full_list))
 
     # also show the same discount totals snapshot at checkout
-    st.subheader("💸 Discount breakdown at checkout")
+    st.subheader("Discount breakdown at checkout")
     if rows:
         st.dataframe(pd.DataFrame(rows), use_container_width=True)
         st.markdown(
