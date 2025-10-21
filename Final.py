@@ -49,11 +49,11 @@ st.subheader("Choose time of day")
 slot = st.radio("Time slot", SLOTS, index=0, horizontal=True)
 band = slot_to_band(slot)
 st.caption(
-    f"""Active band: **{band}**  •
-Morning: 20% off Coffee+Cake (combo) •
-Afternoon: 20% off Fruit Juice •
-Evening: 30% off everything •
-Bulk: ≥3 same item = extra 10% off (before time discount)"""
+    f"""Active band: **{band}**  • \n
+Morning: 20% off Coffee+Cake (combo) • \n
+Afternoon: 20% off Fruit Juice • \n
+Evening: 30% off everything • \n
+Bulk: more than 3 of the same item = extra 10% off (before time discount)"""
 )
 
 ## -----------------------------------------------------------------------------------------
