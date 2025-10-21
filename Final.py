@@ -193,12 +193,18 @@ if st.button("CHECKOUT"):
     time.sleep(1)
     
     st.markdown(f"**Raw total:** ${total_raw:.2f}\n ")
+
+    time.sleep(1)
+    
     st.markdown(f"**Bulk discounts:** −${total_bulk_disc:.2f}\n ")
+    
+    time.sleep(1)
+    
     st.markdown(f"**Time-band discounts:** −${total_time_disc:.2f}\n ")
-    st.markdown(f"**Total due: ${grand_total:.2f}** ")
 
-
-  
+    time.sleep(1)
+    
+    st.markdown(f"### **Total due: ${grand_total:.2f}** ")  
       
   else:
       st.info("No items were selected at checkout.")
