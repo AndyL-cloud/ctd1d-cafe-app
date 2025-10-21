@@ -9,6 +9,7 @@ st.set_page_config(page_title="Cafe App", layout="wide")
 coffee = {'Name' : 'Coffee', 'Price' : 3}
 frjuice = {'Name' : 'Fruit Juice', 'Price' : 2}
 cake = {'Name' : 'Cake', 'Price' : 6}
+menu = [coffee, frjuice, cake]
 ## -----------------------------------------------------------------------------------------
 
 ## INITIALISE VARIABLES --------------------------------------------------------------------
@@ -80,8 +81,6 @@ prod3 = int(st.session_state.get("prod3",0))
 order_now = {"Coffee": prod1, "Fruit Juice":prod2, "Cake":prod3}
 
 morning = has_combo(order_now)
-
-menu = [coffee, frjuice, cake]
 
 ## Getting price of items function by Khansky--------------------------------------------------------------------
 def find_price(item_name):
