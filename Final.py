@@ -3,9 +3,9 @@ import pandas as pd
 import time
 
 ## LIST OF PRODUCTS ------------------------------------------------------------------------
-coffee = {'Name' : 'Coffee', 'Price' : 3,'Type' : ['Mocha', 'Latte', 'Cappuccino']}
-frjuice = {'Name' : 'Fruit Juice', 'Price' : 2, 'Type' : ['Apple', 'Lemon', 'Watermelon']}
-cake = {'Name' : 'Cake', 'Price' : 6, 'Type' : ['Chocolate', 'Vanilla', 'Cheese']}
+coffee = {'Name' : 'Coffee', 'Price' : 3}
+frjuice = {'Name' : 'Fruit Juice', 'Price' : 2}
+cake = {'Name' : 'Cake', 'Price' : 6}
 ## -----------------------------------------------------------------------------------------
 
 ## INITIALISE VARIABLES --------------------------------------------------------------------
